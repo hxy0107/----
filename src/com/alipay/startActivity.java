@@ -10,9 +10,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.alipay.activity.BrowseProcessInfoActivity;
 import com.alipay.common.util.tools.MyLog;
 import com.alipay.common.util.tools.NetworkUtil;
+
+import java.io.IOException;
 
 public class startActivity extends Activity {
     private static String TAG = "AM_MEMORYIPROCESS";
@@ -21,6 +24,7 @@ public class startActivity extends Activity {
 
     private TextView tvAvailMem;
     private Button btProcessInfo;
+
     /**
      * Called when the activity is first created.
      */
@@ -51,9 +55,16 @@ public class startActivity extends Activity {
         Log.i(TAG, "The Availabel Memory Size is" + availMemStr);
         // 显示
         tvAvailMem.setText("系统可用内存为: " + availMemStr);
-        tvAvailMem.setText(NetworkUtil.getAPNType(this)+"");
+        tvAvailMem.setText(NetworkUtil.getAPNType(this) + "");
 
-       // MyLog.MLog.Log();
+
+        IsRoot isRoot = new IsRoot();
+        Boolean b = isRoot.isDeviceRooted();
+
+        tvAvailMem.setText(b + "");
+        isRoot.checkRootMethod4();
+
+        // MyLog.MLog.Log();
     }
 
     // 获得系统可用内存信息
