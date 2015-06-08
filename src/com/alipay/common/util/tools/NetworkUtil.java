@@ -199,6 +199,30 @@ public class NetworkUtil {
         }
         return netType;
     }
+    public static String getAPNType(Context context,Boolean b){
+        String netType = "没有网络连接";
+        final String WIFI="当前连接的是WIFI";
+        final String CMWAP="当前连接的是CMWAP";
+        final String CMNET="当前连接的是CMNET";
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if(networkInfo==null){
+            return netType;
+        }
+        int nType = networkInfo.getType();
+        if(nType==ConnectivityManager.TYPE_MOBILE){
+            if(networkInfo.getExtraInfo().toLowerCase().equals("cmnet")){
+                netType = CMNET;
+            }
+            else{
+                netType = CMWAP;
+            }
+        }
+        else if(nType==ConnectivityManager.TYPE_WIFI){
+            netType = WIFI;
+        }
+        return netType;
+    }
 
     /**
      * 存在多个连接点

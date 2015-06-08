@@ -13,6 +13,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.BrowseProcessInfoActivity"></activity>
+        <service android:name=".test.startService1"/>
+        <service android:name=".test.IntentService2"></service>
+        <service android:name=".test.IntentService1"></service>
+        <service android:name=".common.service.runningService.SysInfoService"/>
     </application>
     <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>

@@ -5,7 +5,7 @@ import android.widget.Toast;
 
 import java.io.*;
 import java.util.ArrayList;
-
+import com.alipay.ExecShell;
 /**
  * Created by xianyu.hxy on 2015/6/2.
  */
@@ -16,7 +16,11 @@ public class IsRoot {
     private final static int kSystemRootStateEnable = 1;
     private static int systemRootState = kSystemRootStateUnknow;
     private static String LOG_TAG = IsRoot.class.getName();
-//只用来判断是否root
+
+    public IsRoot() {
+    }
+
+    //只用来判断是否root
     public boolean isDeviceRooted() {
         if (isRootSystem()) {
             return true;
