@@ -359,7 +359,22 @@ public class NetworkUtil {
         sb.append((ipInt >> 24) & 0xFF);
         return sb.toString();
     }
+    public static String getNetType(Context context)
+    {
+        ConnectivityManager connectMgr = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
 
+        NetworkInfo info = connectMgr.getActiveNetworkInfo();
+        if(info ==null){return "没有网络连接";}
+        if(info.getType() == ConnectivityManager.TYPE_WIFI){return "当前网络连接类型是：WIFI";}
+        if(info !=null && info.getType() ==  ConnectivityManager.TYPE_MOBILE)
+        {
+            int type=info.getSubtype();
+            return getNetworkTypeDetail(type);
+        }
+        return null;
+
+    }
     public static  String getNetworkType(int networkType) {
         // TODO Auto-generated method stub
         switch (networkType) {
@@ -397,6 +412,45 @@ public class NetworkUtil {
                 return "UNKNOWN";
             default:
                 return "UNKNOWN";
+        }
+    }
+    public static  String getNetworkTypeDetail(int networkType) {
+        // TODO Auto-generated method stub
+        switch (networkType) {
+            case TelephonyManager.NETWORK_TYPE_1xRTT:
+                return "网络类型：1xRTT       2G CDMA2000 1xRTT (RTT - 无线电传输技术) 144kbps 2G的过渡\n( 2G )";
+            case TelephonyManager.NETWORK_TYPE_CDMA:
+                return "网络类型：CDMA        2G 电信 Code Division Multiple Access 码分多址\n(2G 电信)";
+            case TelephonyManager.NETWORK_TYPE_EDGE:
+                return "网络类型：EDGE        2G(2.75G) Enhanced Data Rate for GSM Evolution 384kbps\n(2.75G)2.5G到3G的过渡    移动和联通";
+            case TelephonyManager.NETWORK_TYPE_EHRPD:
+                return "网络类型：EHRPD       3G CDMA2000向LTE 4G的中间产物 Evolved High Rate Packet Data HRPD的升级";
+            case TelephonyManager.NETWORK_TYPE_EVDO_0:
+                return "网络类型：EVDO_0      3G (EVDO 全程 CDMA2000 1xEV-DO) Evolution - Data Only (Data Optimized) 153.6kps - 2.4mbps 属于3G\n( 3G )电信";
+            case TelephonyManager.NETWORK_TYPE_EVDO_A:
+                return "网络类型：EVDO_A      3G 1.8mbps - 3.1mbps 属于3G过渡，3.5G\n(3.5G) 属于3G过渡";
+            case TelephonyManager.NETWORK_TYPE_EVDO_B:
+                return "网络类型：EVDO_B      3G EV-DO Rev.B 14.7Mbps 下行 3.5G";
+            case TelephonyManager.NETWORK_TYPE_GPRS:
+                return "网络类型：GPRS        2G(2.5) General Packet Radia Service 114kbps\n(2.5G）移动和联通";
+            case TelephonyManager.NETWORK_TYPE_HSDPA:
+                return "网络类型：HSDPA       3.5G 高速下行分组接入 3.5G WCDMA High Speed Downlink Packet Access 14.4mbps";
+            case TelephonyManager.NETWORK_TYPE_HSPA:
+                return "网络类型：HSPA        3G (分HSDPA,HSUPA) High Speed Packet Access\n( 3G )联通\n(4G)";
+            case TelephonyManager.NETWORK_TYPE_HSPAP:
+                return "网络类型：HSPAP       3G HSPAP\n(3.5G )";
+            case TelephonyManager.NETWORK_TYPE_HSUPA:
+                return "网络类型：HSUPA       3.5G High Speed Uplink Packet Access 高速上行链路分组接入 1.4 - 5.8 mbps\n( 3.5G )";
+            case TelephonyManager.NETWORK_TYPE_IDEN:
+                return "网络类型：IDEN        2G Integrated Dispatch Enhanced Networks 集成数字增强型网络";
+            case TelephonyManager.NETWORK_TYPE_LTE:
+                return "网络类型：LTE         4G Long Term Evolution FDD-LTE 和 TDD-LTE , 3G过渡，升级版 LTE ";
+            case TelephonyManager.NETWORK_TYPE_UMTS:
+                return "网络类型：UMTS        3G WCDMA 联通3G Universal Mobile Telecommunication System 完整的3G移动通信技术标准\n(3G)联通";
+            case TelephonyManager.NETWORK_TYPE_UNKNOWN:
+                return "网络类型：UNKNOWN";
+            default:
+                return "网络类型：UNKNOWN";
         }
     }
 

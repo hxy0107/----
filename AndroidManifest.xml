@@ -17,6 +17,9 @@
         <service android:name=".test.IntentService2"></service>
         <service android:name=".test.IntentService1"></service>
         <service android:name=".common.service.runningService.SysInfoService"/>
+        <service android:name=".common.service.runningService.SysInfoService"/>
+         <service android:name=".common.service.runningService.CaptureService"/>
+        <service android:name=".common.service.runningService.LogcatService"/>
     </application>
     <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>

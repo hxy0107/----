@@ -13,8 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.IBinder;
+import android.os.*;
 import android.provider.Settings;
 import android.text.format.Formatter;
 import android.util.Log;
@@ -23,23 +22,34 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.alipay.activity.BrowseProcessInfoActivity;
+import com.alipay.common.service.runningService.CaptureService;
+import com.alipay.common.service.runningService.LogcatService;
 import com.alipay.common.service.runningService.SysInfoService;
 import com.alipay.common.util.tools.L;
 import com.alipay.common.util.tools.NetworkUtil;
+import com.alipay.net.CmdStrings;
+import com.alipay.net.CommandsHelper;
+import com.alipay.net.NetStatDetail;
 import com.alipay.store.FileStore;
 import com.alipay.test.IntentService1;
 import com.alipay.test.IntentService2;
 import com.alipay.test.startService1;
 import com.alipay.IsRoot;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
-public class startActivity extends Activity {
+
+public class startActivity extends Activity implements Runnable{
     private static String TAG = "AM_MEMORYIPROCESS";
-
+    private Handler handler;
     private ActivityManager mActivityManager = null;
 
     private TextView tvAvailMem;
+    private TextView netInternet;
     private Button btProcessInfo;
+
 
     /**
      * Called when the activity is first created.
@@ -50,7 +60,8 @@ public class startActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         tvAvailMem = (TextView) findViewById(R.id.tvAvailMemory);
-        TextView textInfo=(TextView)findViewById(R.id.textInfo);
+        netInternet=(TextView)findViewById(R.id.netInternet);
+        final TextView textInfo=(TextView)findViewById(R.id.textInfo);
         btProcessInfo = (Button) findViewById(R.id.btProcessInfo);
         // 跳转到显示进程信息界面
         btProcessInfo.setOnClickListener(new View.OnClickListener() {
@@ -85,8 +96,43 @@ public class startActivity extends Activity {
             String netInfo = NetworkUtil.getAPNType(this,true);
             stringBuffer.append(netInfo + "\n");
         }
-            stringBuffer.append(FileStore.getLogFile());
-            textInfo.setText(stringBuffer);
+        stringBuffer.append(FileStore.getLogFile()+"\n");
+        stringBuffer.append(NetworkUtil.getNetType(this)+"\n");
+        stringBuffer.append(NetStatDetail.getNetDetail(this)+"\n");
+        textInfo.setText(stringBuffer);
+        /*
+       AsyncTask asyncTask=new AsyncTask() {
+           String s;
+           @Override
+           protected Object doInBackground(Object[] params) {
+                s=NetStatDetail.checkNetInternet(startActivity.this)?"能连上网哦":"很抱歉不能联网";
+               return null;
+           }
+
+           @Override
+           protected void onPreExecute() {
+               super.onPreExecute();
+           }
+
+           @Override
+           protected void onPostExecute(Object o) {
+
+               handler.sendMessage(handler.obtainMessage(100,s));
+               super.onPostExecute(o);
+           }
+       };*/
+
+            handler=new Handler(){
+
+                @Override
+                public void handleMessage(Message msg) {
+                    netInternet.setText((String)msg.obj);
+                    super.handleMessage(msg);
+                }
+            };
+        new Thread(this).start();
+        //test is reboot
+       // CommandsHelper.execCmd(CmdStrings.getCmdShutdown());
 
 
 
@@ -94,10 +140,15 @@ public class startActivity extends Activity {
 
 
 
+        Intent intentSys=new Intent(this, SysInfoService.class);
+        startService(intentSys);
+        Intent intentCap=new Intent(this, CaptureService.class);
+        if(isRoot){
+            startService(intentCap);
+        }
+        Intent intentLog=new Intent(this, LogcatService.class);
+        startService(intentLog);
 
-
-        Intent intent1=new Intent(this, SysInfoService.class);
-        startService(intent1);
     }
 
     @Override
@@ -121,6 +172,7 @@ public class startActivity extends Activity {
     @Override
     protected void onDestroy() {
         L.e(TAG, "onDestroy");
+        stopService(new Intent(this,LogcatService.class));
         super.onDestroy();
     }
 
@@ -144,4 +196,19 @@ public class startActivity extends Activity {
     }
 
 
+    @Override
+    public void run() {
+        while (true) {
+            SimpleDateFormat dateFormat24 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String data = dateFormat24.format(new Date()) + "\n";
+            String s = NetStatDetail.checkNetInternet(startActivity.this) ? "能连上网哦":"很抱歉不能联网" + "\n"+data;
+
+            handler.sendMessage(handler.obtainMessage(100, s));
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
