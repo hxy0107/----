@@ -1,6 +1,7 @@
 package com.alipay.store;
 
 import android.os.Environment;
+import android.util.Base64;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -40,6 +41,20 @@ public class FileStore {
             e.printStackTrace();
         }
     }
+    public static synchronized void writeBase64(String content)
+    {
+        try
+        {
+            FileWriter writer = new FileWriter(getFile(), true);
+            String base64=new String(Base64.encode(content.getBytes(),Base64.DEFAULT ));
+            writer.write(base64+"\n");
+            writer.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
     public static synchronized void write(String content,String path)
     {
         try
@@ -53,9 +68,24 @@ public class FileStore {
             e.printStackTrace();
         }
     }
+    public static synchronized void writeBase64(String content,String path)
+    {
+        try
+        {
+            FileWriter writer = new FileWriter(getFile(path), true);
+            String base64=new String(Base64.encode(content.getBytes(),Base64.DEFAULT ));
+            writer.write(base64+"\n");
+            writer.write(content+"\n");
+            writer.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
 
     /**
-     * 获取日志文件路径
+     * 获取日志文件路径 默认以时间为文件名
      * @return
      */
     public static String getFile()

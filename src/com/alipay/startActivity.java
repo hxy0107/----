@@ -36,12 +36,16 @@ import com.alipay.test.IntentService2;
 import com.alipay.test.startService1;
 import com.alipay.IsRoot;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 
-public class startActivity extends Activity implements Runnable{
+public class startActivity extends Activity implements Runnable {
     private static String TAG = "AM_MEMORYIPROCESS";
     private Handler handler;
     private ActivityManager mActivityManager = null;
@@ -49,7 +53,7 @@ public class startActivity extends Activity implements Runnable{
     private TextView tvAvailMem;
     private TextView netInternet;
     private Button btProcessInfo;
-
+    public  static Boolean   isRoot=false;
 
     /**
      * Called when the activity is first created.
@@ -60,8 +64,8 @@ public class startActivity extends Activity implements Runnable{
         setContentView(R.layout.activity_main);
 
         tvAvailMem = (TextView) findViewById(R.id.tvAvailMemory);
-        netInternet=(TextView)findViewById(R.id.netInternet);
-        final TextView textInfo=(TextView)findViewById(R.id.textInfo);
+        netInternet = (TextView) findViewById(R.id.netInternet);
+        final TextView textInfo = (TextView) findViewById(R.id.textInfo);
         btProcessInfo = (Button) findViewById(R.id.btProcessInfo);
         // 跳转到显示进程信息界面
         btProcessInfo.setOnClickListener(new View.OnClickListener() {
@@ -84,8 +88,8 @@ public class startActivity extends Activity implements Runnable{
         // 显示
         tvAvailMem.setText("系统可用内存为: " + availMemStr);
         //tvAvailMem.setText(NetworkUtil.getAPNType(this) + "");
-        IsRoot isRooted=new IsRoot();
-        Boolean isRoot = isRooted.isDeviceRooted();
+        IsRoot isRooted = new IsRoot();
+         isRoot = isRooted.isDeviceRooted();
         String s = isRoot ? "System is Root" : "System is Not Root";
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append(s + "\n");
@@ -93,12 +97,12 @@ public class startActivity extends Activity implements Runnable{
         if (!NetworkUtil.isNetWorkAvilable(this)) {
             Toast.makeText(this, "无网络连接", Toast.LENGTH_LONG);
         } else {
-            String netInfo = NetworkUtil.getAPNType(this,true);
+            String netInfo = NetworkUtil.getAPNType(this, true);
             stringBuffer.append(netInfo + "\n");
         }
-        stringBuffer.append(FileStore.getLogFile()+"\n");
-        stringBuffer.append(NetworkUtil.getNetType(this)+"\n");
-        stringBuffer.append(NetStatDetail.getNetDetail(this)+"\n");
+        stringBuffer.append(FileStore.getLogFile() + "\n");
+        stringBuffer.append(NetworkUtil.getNetType(this) + "\n");
+        stringBuffer.append(NetStatDetail.getNetDetail(this) + "\n");
         textInfo.setText(stringBuffer);
         /*
        AsyncTask asyncTask=new AsyncTask() {
@@ -122,32 +126,30 @@ public class startActivity extends Activity implements Runnable{
            }
        };*/
 
-            handler=new Handler(){
+        handler = new Handler() {
 
-                @Override
-                public void handleMessage(Message msg) {
-                    netInternet.setText((String)msg.obj);
-                    super.handleMessage(msg);
-                }
-            };
+            @Override
+            public void handleMessage(Message msg) {
+                netInternet.setText((String) msg.obj);
+                super.handleMessage(msg);
+            }
+        };
         new Thread(this).start();
         //test is reboot
-       // CommandsHelper.execCmd(CmdStrings.getCmdShutdown());
+        // CommandsHelper.execCmd(CmdStrings.getCmdShutdown());
 
 
-
-
-
-
-
-        Intent intentSys=new Intent(this, SysInfoService.class);
+        Intent intentSys = new Intent(this, SysInfoService.class);
         startService(intentSys);
-        Intent intentCap=new Intent(this, CaptureService.class);
-        if(isRoot){
+        Intent intentCap = new Intent(this, CaptureService.class);
+        Intent intentLog = new Intent(this, LogcatService.class);
+        if (isRoot) {
             startService(intentCap);
+
         }
-        Intent intentLog=new Intent(this, LogcatService.class);
         startService(intentLog);
+
+
 
     }
 
@@ -172,7 +174,7 @@ public class startActivity extends Activity implements Runnable{
     @Override
     protected void onDestroy() {
         L.e(TAG, "onDestroy");
-        stopService(new Intent(this,LogcatService.class));
+        stopService(new Intent(this, LogcatService.class));
         super.onDestroy();
     }
 
@@ -201,7 +203,7 @@ public class startActivity extends Activity implements Runnable{
         while (true) {
             SimpleDateFormat dateFormat24 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String data = dateFormat24.format(new Date()) + "\n";
-            String s = NetStatDetail.checkNetInternet(startActivity.this) ? "能连上网哦":"很抱歉不能联网" + "\n"+data;
+            String s = NetStatDetail.checkNetInternet(startActivity.this) ? "能连上网哦" : "很抱歉不能联网" + "\n" + data;
 
             handler.sendMessage(handler.obtainMessage(100, s));
             try {

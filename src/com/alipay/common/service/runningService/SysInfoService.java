@@ -3,9 +3,11 @@ package com.alipay.common.service.runningService;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import com.alipay.common.util.tools.L;
 import com.alipay.info.AppInfo;
 import com.alipay.info.PacInfo;
 import com.alipay.info.RunningAppInfo;
+import com.alipay.security.Base64;
 import com.alipay.store.FileStore;
 
 import java.io.FileWriter;
@@ -75,11 +77,19 @@ public class SysInfoService extends Service {
                // FileStore.write(stringBuffer.toString(),FileStore.getLogFile());
                 FileWriter writer = null;
                 try {
+                    if(L.isDebugModel){
                     writer = new FileWriter(FileStore.getLogFile(), true);
                     writer.write(stringBuffer.toString()+"\n");
                     writer.write(stringBuffer3rd.toString()+"\n");
                     writer.write(stringBufferRun.toString()+"\n");
                     writer.close();
+                    }else {
+                        writer = new FileWriter(FileStore.getLogFile(), true);
+                        writer.write(Base64.toBase64(stringBuffer.toString()) + "\n");
+                        writer.write(Base64.toBase64(stringBuffer3rd.toString())+"\n");
+                        writer.write(Base64.toBase64(stringBufferRun.toString())+"\n");
+                        writer.close();
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

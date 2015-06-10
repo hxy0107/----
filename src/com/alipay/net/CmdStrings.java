@@ -13,6 +13,13 @@ public class CmdStrings {
        commands[3] = "./reboot";
        return commands;
    }
-
+    //kill ½ø³ÌÃû
+    public static String[] stopCmd(String cmd)
+    {
+        String[] commands = new String[2];
+        commands[0] = "adb shell";
+        commands[1] = "busybox pkill -SIGINT "+cmd;
+        return commands;
+    }
 
 }

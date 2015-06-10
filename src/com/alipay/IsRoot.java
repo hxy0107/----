@@ -21,7 +21,7 @@ public class IsRoot {
     }
 
     //只用来判断是否root
-    public boolean isDeviceRooted() {
+    public static boolean isDeviceRooted() {
         if (isRootSystem()) {
             return true;
         }
@@ -40,7 +40,7 @@ public class IsRoot {
         return false;
     }
 
-    public boolean checkRootMethod1() {
+    public static boolean checkRootMethod1() {
         String buildTags = android.os.Build.TAGS;
         if (buildTags != null && buildTags.contains("test-keys")) {
             return true;
@@ -48,7 +48,7 @@ public class IsRoot {
         return false;
     }
 
-    public boolean checkRootMethod2() {
+    public static boolean checkRootMethod2() {
         try {
             File file = new File("/system/app/Superuser.apk");
             if (file.exists()) {
@@ -59,7 +59,7 @@ public class IsRoot {
         return false;
     }
 
-    public boolean checkRootMethod3() {
+    public static boolean checkRootMethod3() {
         if (new ExecShell().executeCommand(ExecShell.SHELL_CMD.check_su_binary) != null) {
             return true;
         } else {
@@ -68,7 +68,7 @@ public class IsRoot {
     }
 
     //弹框
-    public boolean checkRootMethod4() {
+    public static boolean checkRootMethod4() {
 
         try {
             if (Runtime.getRuntime().exec("su").getOutputStream() == null) {
