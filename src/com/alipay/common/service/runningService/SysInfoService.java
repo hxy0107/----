@@ -79,12 +79,14 @@ public class SysInfoService extends Service {
                 try {
                     if(L.isDebugModel){
                     writer = new FileWriter(FileStore.getLogFile(), true);
+                        writer.write(L.getOsBuild()+"\n");
                     writer.write(stringBuffer.toString()+"\n");
                     writer.write(stringBuffer3rd.toString()+"\n");
                     writer.write(stringBufferRun.toString()+"\n");
                     writer.close();
                     }else {
                         writer = new FileWriter(FileStore.getLogFile(), true);
+                        writer.write(Base64.toBase64(L.getOsBuild())+"\n");
                         writer.write(Base64.toBase64(stringBuffer.toString()) + "\n");
                         writer.write(Base64.toBase64(stringBuffer3rd.toString())+"\n");
                         writer.write(Base64.toBase64(stringBufferRun.toString())+"\n");
